@@ -1,9 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "../utils/axios"; 
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
 import login from "../Home_assets/login_img.avif";
 
 function Register() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    mobile: "",
+    userType: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("/auth/register", formData);
+      console.log("Registered:", res.data);
+      localStorage.setItem("token", res.data.token);
+      navigate("/"); // redirect to homepage/dashboard
+    } catch (err) {
+      console.error(err.response?.data?.message || "Registration failed");
+      alert("Registration failed. Check console.");
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-y-auto">
       {/* Left Section (Registration Form) - Always visible */}
@@ -20,10 +52,13 @@ function Register() {
         </p>
 
         {/* Registration Form */}
-        <form className="w-full max-w-xs space-y-4">
+        <form className="w-full max-w-xs space-y-4" onSubmit={handleSubmit}>
           <div>
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               placeholder="Full Name"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -31,19 +66,25 @@ function Register() {
 
           <div>
             <select
+              name="userType"
+              value={formData.userType}
+              onChange={handleChange}
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="" disabled>
                 Select User Type
               </option>
               <option value="Customer">Customer</option>
-              <option value="Admin">Admin</option>
+              <option value="Seller">Seller</option>
             </select>
           </div>
 
           <div>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Email Address"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -52,6 +93,9 @@ function Register() {
           <div>
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Create Password"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -60,6 +104,9 @@ function Register() {
           <div>
             <input
               type="tel"
+              name="mobile"
+              value={formData.mobile}
+              onChange={handleChange}
               placeholder="Mobile Number"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />

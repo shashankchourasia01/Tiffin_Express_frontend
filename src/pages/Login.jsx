@@ -1,9 +1,37 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "../utils/axios"; // Make sure path is correct
 import login from '../Home_assets/login_img.avif';
 import { FaUtensils } from "react-icons/fa";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("/auth/login", formData);
+      console.log("Logged In:", res.data);
+      localStorage.setItem("token", res.data.token);
+      navigate("/");
+    } catch (err) {
+      console.error(err.response?.data?.message || "Login failed");
+      alert("Login failed. Check console.");
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden">
       {/* Left Section - Always visible */}
@@ -20,10 +48,13 @@ function Login() {
         </p>
 
         {/* Login Form */}
-        <form className="w-full max-w-xs">
+        <form className="w-full max-w-xs" onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Email"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -31,6 +62,9 @@ function Login() {
           <div className="mb-6">
             <input
               type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               placeholder="Password"
               className="w-full p-3 border rounded-lg text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
