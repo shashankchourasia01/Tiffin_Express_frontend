@@ -12,6 +12,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import GroceryPage from './pages/Grocery';
 import FindKitchen from './pages/FindKitchen';
+import AllMenu from './pages/AllMenu';
+import ShopProducts from './pages/AllGrocery';
 
 const App = () => {
   return (
@@ -28,7 +30,9 @@ const App = () => {
               <Route path='/login' element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path='/grocery' element={<GroceryPage />} />
+              <Route path="/grocery/shop/:shopId" element={<ShopProducts />} />
               <Route path='/find' element={<FindKitchen />} />
+              <Route path="/menu/:kitchenId" element={<AllMenu />} />
             </Routes>
           </main>
           <Footer />
